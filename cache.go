@@ -5,33 +5,23 @@ import (
 )
 
 type db struct {
-	data map[string]interface{}
-	sync.Mutex
+	data sync.Map
 }
 
-func New(data map[string]interface{}) *db {
+func New() *db {
 	return &db{
-		data: data,
+		data: sync.Map{},
 	}
 }
 
 func (db *db) Set(key string, value interface{}) {
-	db.Lock()
-	defer db.Unlock()
-
-	db.data[key] = value
+	db.data.Store(key, value)
 }
 
-func (db *db) Get(key string) (result interface{}) {
-	db.Lock()
-	defer db.Unlock()
-
-	return db.data[key]
+func (db *db) Get(key string) (result interface{}, ok bool) {
+	return db.data.Load(key)
 }
 
 func (db *db) Delete(key string) {
-	db.Lock()
-	defer db.Unlock()
-
-	delete(db.data, key)
+	db.data.Delete(key)
 }
