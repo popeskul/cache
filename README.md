@@ -8,7 +8,7 @@ package main
 
 import (
 	"fmt"
-	"memory-cache/cache"
+	"github.com/popeskul/cache"
 )
 
 func main() {
