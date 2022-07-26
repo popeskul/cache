@@ -41,7 +41,7 @@ func TestSetWithTimeout(t *testing.T) {
 
 		cache.SetWithTimeout("key", "value", time.Microsecond*1)
 
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 2)
 
 		result, ok := cache.Get("key")
 		if ok {
