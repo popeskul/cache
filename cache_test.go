@@ -2,6 +2,7 @@ package cache
 
 import (
 	"testing"
+	"time"
 )
 
 var cache *db
@@ -18,6 +19,38 @@ func TestSet(t *testing.T) {
 	if result != "value" {
 		t.Error("Expected value to be 'value'")
 	}
+}
+
+func TestSetWithTimeout(t *testing.T) {
+	createCache(t)
+
+	t.Run("Get", func(t *testing.T) {
+		cache.SetWithTimeout("key", "value", time.Millisecond*1)
+
+		result, ok := cache.Get("key")
+		if !ok {
+			t.Error("Expected value to be 'value'")
+		}
+		if result != "value" {
+			t.Error("Expected value to be 'value'")
+		}
+	})
+
+	t.Run("wait for the key to expire", func(t *testing.T) {
+		t.Parallel()
+
+		cache.SetWithTimeout("key", "value", time.Microsecond*1)
+
+		time.Sleep(time.Second * 1)
+
+		result, ok := cache.Get("key")
+		if ok {
+			t.Error("Expected value to be nil")
+		}
+		if result != nil {
+			t.Error("Expected value to be nil")
+		}
+	})
 }
 
 func TestGet(t *testing.T) {
