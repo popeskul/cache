@@ -48,6 +48,11 @@ func (db *db) Delete(key string) error {
 		return ErrKeyEmpty
 	}
 
+	_, ok := db.data.Load(key)
+	if !ok {
+		return ErrKeyNotFound
+	}
+
 	db.data.Delete(key)
 
 	return nil
