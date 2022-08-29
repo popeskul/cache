@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var cache *db
+var cache *Cache
 
 func TestSet(t *testing.T) {
 	createCache(t)

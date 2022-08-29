@@ -10,13 +10,13 @@ type value struct {
 	ttl   *time.Time
 }
 
-type db struct {
+type Cache struct {
 	ticker *time.Ticker
 	data   sync.Map
 }
 
-func New() *db {
-	db := &db{
+func New() *Cache {
+	db := &Cache{
 		ticker: time.NewTicker(time.Second * 1),
 		data:   sync.Map{},
 	}
@@ -27,7 +27,7 @@ func New() *db {
 }
 
 // background goroutine to clean up expired keys in the cache
-func (db *db) backgroundCacheCleaner() {
+func (db *Cache) backgroundCacheCleaner() {
 	for {
 		<-db.ticker.C
 		db.data.Range(func(key, v interface{}) bool {
@@ -49,12 +49,12 @@ func (db *db) backgroundCacheCleaner() {
 	}
 }
 
-func (db *db) Set(key string, v interface{}, ttl time.Duration) {
+func (db *Cache) Set(key string, v interface{}, ttl time.Duration) {
 	t := time.Now().Add(ttl)
 	db.data.Store(key, &value{v, &t})
 }
 
-func (db *db) Get(key string) (result interface{}, ok bool) {
+func (db *Cache) Get(key string) (result interface{}, ok bool) {
 	load, ok := db.data.Load(key)
 	if !ok {
 		return nil, false
@@ -68,6 +68,6 @@ func (db *db) Get(key string) (result interface{}, ok bool) {
 	return vv.value, true
 }
 
-func (db *db) Delete(key string) {
+func (db *Cache) Delete(key string) {
 	db.data.Delete(key)
 }
