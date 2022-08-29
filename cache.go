@@ -11,14 +11,14 @@ type value struct {
 }
 
 type db struct {
-	t    *time.Ticker
-	data sync.Map
+	ticker *time.Ticker
+	data   sync.Map
 }
 
 func New() *db {
 	db := &db{
-		t:    time.NewTicker(time.Second * 1),
-		data: sync.Map{},
+		ticker: time.NewTicker(time.Second * 1),
+		data:   sync.Map{},
 	}
 
 	go db.backgroundCacheCleaner()
@@ -29,7 +29,7 @@ func New() *db {
 // background goroutine to clean up expired keys in the cache
 func (db *db) backgroundCacheCleaner() {
 	for {
-		<-db.t.C
+		<-db.ticker.C
 		db.data.Range(func(key, v interface{}) bool {
 			vv, ok := v.(*value)
 			if !ok {
@@ -49,12 +49,7 @@ func (db *db) backgroundCacheCleaner() {
 	}
 }
 
-// Set sets a key to a value in the cache forever.
-func (db *db) Set(key string, v interface{}) {
-	db.data.Store(key, &value{v, nil})
-}
-
-func (db *db) SetWithTimeout(key string, v interface{}, ttl time.Duration) {
+func (db *db) Set(key string, v interface{}, ttl time.Duration) {
 	t := time.Now().Add(ttl)
 	db.data.Store(key, &value{v, &t})
 }
