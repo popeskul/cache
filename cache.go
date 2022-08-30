@@ -49,7 +49,7 @@ func (db *Cache) backgroundCacheCleaner() {
 	}
 }
 
-func (db *Cache) Set(key string, v interface{}, ttl time.Duration) {
+func (db *Cache) Set(key interface{}, v interface{}, ttl time.Duration) {
 	t := time.Now().Add(ttl)
 	db.data.Store(key, &value{v, &t})
 }
