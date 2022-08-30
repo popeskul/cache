@@ -11,7 +11,7 @@ func TestSet(t *testing.T) {
 	createCache(t)
 
 	t.Run("Get", func(t *testing.T) {
-		cache.Set("key", "value", time.Millisecond*1)
+		cache.Set("key", "value")
 
 		result, ok := cache.Get("key")
 		if !ok {
@@ -25,7 +25,7 @@ func TestSet(t *testing.T) {
 	t.Run("wait for the key to expire", func(t *testing.T) {
 		t.Parallel()
 
-		cache.Set("key", "value", time.Microsecond*1)
+		cache.Set("key", "value")
 
 		time.Sleep(time.Second * 2)
 
@@ -42,7 +42,7 @@ func TestSet(t *testing.T) {
 func TestGet(t *testing.T) {
 	createCache(t)
 
-	cache.Set("key", "value", time.Microsecond*1)
+	cache.Set("key", "value")
 
 	result, ok := cache.Get("key")
 	if !ok {
@@ -56,7 +56,7 @@ func TestGet(t *testing.T) {
 func TestDelete(t *testing.T) {
 	createCache(t)
 
-	cache.Set("key", "value", time.Microsecond*1)
+	cache.Set("key", "value")
 	cache.Delete("key")
 
 	result, ok := cache.Get("key")
@@ -69,10 +69,10 @@ func TestDelete(t *testing.T) {
 }
 
 func createCache(t *testing.T) {
-	cache = New()
+	cache = New(time.Millisecond * 1)
 
 	// callback function to reset cache
 	t.Cleanup(func() {
-		cache = New()
+		cache = New(time.Millisecond * 1)
 	})
 }

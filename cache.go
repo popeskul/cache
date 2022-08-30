@@ -13,12 +13,14 @@ type value struct {
 type Cache struct {
 	ticker *time.Ticker
 	data   sync.Map
+	ttl    time.Duration
 }
 
-func New() *Cache {
+func New(ttl time.Duration) *Cache {
 	db := &Cache{
 		ticker: time.NewTicker(time.Second * 1),
 		data:   sync.Map{},
+		ttl:    ttl,
 	}
 
 	go db.backgroundCacheCleaner()
@@ -49,8 +51,8 @@ func (db *Cache) backgroundCacheCleaner() {
 	}
 }
 
-func (db *Cache) Set(key interface{}, v interface{}, ttl time.Duration) {
-	t := time.Now().Add(ttl)
+func (db *Cache) Set(key interface{}, v interface{}) {
+	t := time.Now().Add(db.ttl)
 	db.data.Store(key, &value{v, &t})
 }
 
