@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	cache := cache.New()
+	cache := cache.New("10h00m")
 
 	cache.Set("userId", 42)
 	userId, _ := cache.Get("userId")
