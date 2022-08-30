@@ -68,6 +68,6 @@ func (db *Cache) Get(key interface{}) (result interface{}, ok bool) {
 	return vv.value, true
 }
 
-func (db *Cache) Delete(key string) {
+func (db *Cache) Delete(key interface{}) {
 	db.data.Delete(key)
 }
